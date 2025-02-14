@@ -1,5 +1,5 @@
-FROM golang:1.20.1-alpine3.17 AS BUILD_IMAGE
-ENV WEBHOOK_VERSION "2.8.1"
+FROM golang:1.23.6-alpine3.21 AS BUILD_IMAGE
+ENV WEBHOOK_VERSION "2.8.2"
 
 RUN apk add --update --no-cache -t build-deps curl gcc libc-dev libgcc
 WORKDIR /go/src/github.com/adnanh/webhook
@@ -8,12 +8,12 @@ COPY . /go/src/github.com/adnanh/webhook
 RUN go get -d && \
    go build -ldflags="-s -w" -o /usr/local/bin/webhook
 
-FROM alpine:3.19.0
+FROM alpine:3.21.0
 
 WORKDIR /infra
 COPY --from=BUILD_IMAGE /usr/local/bin/webhook /usr/local/bin/webhook
 
-ARG YQ_VERSION="v4.34.1"
+ARG YQ_VERSION="v4.44.6"
 ENV YQ_VERSION "${YQ_VERSION}"
 
 RUN apk update && apk add --no-cache \
